@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "hash_map.hpp"
+#include "upc_hash_map.hpp"
 #include "kmer_t.hpp"
 #include "read_kmers.hpp"
 
