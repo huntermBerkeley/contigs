@@ -15,8 +15,8 @@ struct UpcHashMap {
 
     // Most important functions: insert and retrieve
     // k-mers from the hash table.
-    upcxx::future<bool> insert(const kmer_pair& kmer);
-    upcx::future<kmer_pair> find(const pkmer_t& key_kmer, kmer_pair& val_kmer);
+    void insert(const kmer_pair& kmer);
+    upcxx::future<kmer_pair> find(const pkmer_t& key_kmer, kmer_pair& val_kmer);
 
     // Helper functions
 
@@ -31,7 +31,7 @@ struct UpcHashMap {
 
 UpcHashMap::UpcHashMap(size_t size) {
     //round up to guarantee hashhmap >= size
-    my_size = (size + upcxx::rank_n() - 1) / upcxx::rank_n();
+    size_t my_size = (size + upcxx::rank_n() - 1) / upcxx::rank_n();
 
     //remotes should build hashmap
     HashMap my_hashmap(my_size);
