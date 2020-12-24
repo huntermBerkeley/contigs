@@ -97,6 +97,6 @@ upcxx::future<kmer_pair> UpcHashMap::find(const pkmer_t& key_kmer) {
 
     }
 
-    map, kmer);
+    map, key_kmer);
 
 }
