@@ -89,13 +89,13 @@ upcxx::future<kmer_pair> UpcHashMap::find(const pkmer_t& key_kmer) {
 
       bool success = map->find(key_kmer, &toReturn);
 
-      if (!sucess){
+      if (!success){
           throw std::runtime_error("Error: Kmer not found!");
       }
 
       return toReturn;
 
-    }
+    },
 
     map, key_kmer);
 
