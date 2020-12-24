@@ -16,7 +16,7 @@ struct UpcHashMap {
     // Most important functions: insert and retrieve
     // k-mers from the hash table.
     void insert(const kmer_pair& kmer);
-    upcxx::future<kmer_pair> find(const pkmer_t& key_kmer, kmer_pair& val_kmer);
+    upcxx::future<kmer_pair> find(const pkmer_t& key_kmer);
 
     // Helper functions
 
