@@ -30,8 +30,13 @@ struct UpcHashMap {
 };
 
 UpcHashMap::UpcHashMap(size_t size) {
+
+
     //round up to guarantee hashhmap >= size
     size_t my_size = (size + upcxx::rank_n() - 1) / upcxx::rank_n();
+
+    //will this work?
+    map = upcxx::dist_object<HashMap>(my_size);
 
     //remotes should build hashmap
     HashMap my_hashmap(my_size);
@@ -44,7 +49,7 @@ void UpcHashMap::insert(const kmer_pair& kmer) {
     uint64_t hash = kmer.hash() % upcxx::rank_n();
 
 
-    return upcxx::rpc(hash,
+   upcxx::rpc(hash,
 
       [](
         upcxx::dist_object<HashMap> & map,
@@ -54,12 +59,14 @@ void UpcHashMap::insert(const kmer_pair& kmer) {
         //return insert
         bool success = map->insert(kmer);
 
-        if !(success){
+        if (!success){
           throw std::runtime_error("Error: HashMap is full!");
         }
         return;
 
       }, map, kmer);
+
+      return;
     }
 
 
@@ -69,8 +76,6 @@ upcxx::future<kmer_pair> UpcHashMap::find(const pkmer_t& key_kmer) {
     uint64_t hash = key_kmer.hash() % upcxx::rank_n();
 
     kmer_pair toReturn;
-
-    throw std::runtime_error("Error: k-mer not found in hashmap.");
 
     return upcxx::rpc(hash,
 
@@ -82,7 +87,11 @@ upcxx::future<kmer_pair> UpcHashMap::find(const pkmer_t& key_kmer) {
       //init kmer to Return
       kmer_pair toReturn;
 
-      map->find(key_kmer, &toReturn);
+      bool success = map->find(key_kmer, &toReturn);
+
+      if (!sucess){
+          throw std::runtime_error("Error: Kmer not found!");
+      }
 
       return toReturn;
 
