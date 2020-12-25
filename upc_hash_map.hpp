@@ -21,12 +21,7 @@ struct UpcHashMap {
     // Helper functions
 
     // Write and read to a logical data slot in the table.
-    void write_slot(uint64_t slot, const kmer_pair& kmer);
-    kmer_pair read_slot(uint64_t slot);
 
-    // Request a slot or check if it's already used.
-    bool request_slot(uint64_t slot);
-    bool slot_used(uint64_t slot);
 };
 
 UpcHashMap::UpcHashMap(size_t size) {
@@ -36,7 +31,7 @@ UpcHashMap::UpcHashMap(size_t size) {
     size_t my_size = (size + upcxx::rank_n() - 1) / upcxx::rank_n();
 
     //will this work?
-    map = upcxx::dist_object<HashMap>(my_size);
+    //map = upcxx::dist_object<HashMap>(my_size);
 
     //remotes should build hashmap
     HashMap my_hashmap(my_size);
@@ -81,7 +76,7 @@ upcxx::future<kmer_pair> UpcHashMap::find(const pkmer_t& key_kmer) {
 
     [](
       upcxx::dist_object<HashMap>  &map,
-      const kmer_pair  & key_kmer
+      const pkmer_t  & key_kmer
     ) -> kmer_pair {
 
       //init kmer to Return
